@@ -15,7 +15,6 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
-
 #大麦网主页
 damai_url="https://www.damai.cn/"
 #登录页
@@ -23,7 +22,7 @@ login_url="https://passport.damai.cn/login?ru=https%3A%2F%2Fwww.damai.cn%2F"
 #抢票目标页
 # target_url="https://detail.damai.cn/item.htm?spm=a2oeg.search_category.0.0.71254d153q9EDX&id=590449968855&clicktitle=%E7%9B%B4%E5%88%B0%E4%B8%96%E7%95%8C%E5%B0%BD%E5%A4%B4-8090%E7%BB%8F%E5%85%B8%E5%8A%A8%E6%BC%AB%E6%BC%94%E5%94%B1%E4%BC%9A%E4%B8%8A%E6%B5%B7%E7%AB%99"
 #选座类型页面
-target_url="https://detail.damai.cn/item.htm?spm=a2oeg.search_category.0.0.12184d158syK1V&id=594491989335&clicktitle=2019%E5%92%AA%E5%92%95%E9%9F%B3%E4%B9%90%E7%8E%B0%E5%9C%BA%E4%B8%81%E5%BD%93%E2%80%9C%E7%88%B1%E5%88%B0%E4%B8%8D%E8%A6%81%E5%91%BD%E2%80%9D%E5%B7%A1%E5%9B%9E%E6%BC%94%E5%94%B1%E4%BC%9A%20%E4%B8%8A%E6%B5%B7%E7%AB%99"
+target_url="https://detail.damai.cn/item.htm?spm=a2oeg.home.card_0.ditem_4.591b23e1PL0Ft9&id=597200289158"
 
 name = "Your_Name"
 phone = "Your_PhoneNumber"
@@ -79,15 +78,22 @@ class Concert(object):
     
      
     def enter_concert(self):
-        print('###打开浏览器，进入大麦网###') 
-        self.driver = webdriver.Chrome()        #默认Chrome浏览器
+        print('###打开浏览器，进入大麦网###')
+        # self.driver = webdriver.Chrome()
+        self.option = webdriver.ChromeOptions()
+        self.option.add_experimental_option('excludeSwitches', ['enable-automation'])
+        self.driver = webdriver.Chrome(options=self.option)
+        # self.driver = webdriver.Firefox()        #默认Chrome浏览器
         # self.driver.maximize_window()           #最大化窗口
         self.login()                            #先登录再说
+        time.sleep(30)
+
         self.driver.refresh()                   #刷新页面
         self.status = 2                         #登录成功标识
         print("###登录成功###")
 
     def choose_ticket(self):
+        print("进入choose_ticket函数")
         if self.status == 2:                  #登录成功入口
             self.num = 1                      #第一次尝试
 
