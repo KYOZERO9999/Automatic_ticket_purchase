@@ -22,10 +22,12 @@ login_url="https://passport.damai.cn/login?ru=https%3A%2F%2Fwww.damai.cn%2F"
 #抢票目标页
 # target_url="https://detail.damai.cn/item.htm?spm=a2oeg.search_category.0.0.71254d153q9EDX&id=590449968855&clicktitle=%E7%9B%B4%E5%88%B0%E4%B8%96%E7%95%8C%E5%B0%BD%E5%A4%B4-8090%E7%BB%8F%E5%85%B8%E5%8A%A8%E6%BC%AB%E6%BC%94%E5%94%B1%E4%BC%9A%E4%B8%8A%E6%B5%B7%E7%AB%99"
 #选座类型页面
-target_url="https://detail.damai.cn/item.htm?spm=a2oeg.home.card_0.ditem_4.591b23e1PL0Ft9&id=597200289158"
+#target_url="https://detail.damai.cn/item.htm?spm=a2oeg.home.card_0.ditem_4.591b23e1PL0Ft9&id=597200289158"
+# target_url="https://detail.damai.cn/item.htm?id=598182156683"
+target_url="https://detail.damai.cn/item.htm?id=596027877394"
 
-name = "Your_Name"
-phone = "Your_PhoneNumber"
+name = "李鸣洋"
+phone = "13704809074"
 
 class Concert(object):
     def __init__(self):
@@ -84,9 +86,9 @@ class Concert(object):
         self.option.add_experimental_option('excludeSwitches', ['enable-automation'])
         self.driver = webdriver.Chrome(options=self.option)
         # self.driver = webdriver.Firefox()        #默认Chrome浏览器
-        # self.driver.maximize_window()           #最大化窗口
+        self.driver.maximize_window()           #最大化窗口
         self.login()                            #先登录再说
-        time.sleep(30)
+        time.sleep(15)                          #给15秒手动登录
 
         self.driver.refresh()                   #刷新页面
         self.status = 2                         #登录成功标识
@@ -94,60 +96,8 @@ class Concert(object):
 
     def choose_ticket(self):
         print("进入choose_ticket函数")
-        if self.status == 2:                  #登录成功入口
-            self.num = 1                      #第一次尝试
-
-            print("="*30)
-            print("###开始进行日期及票价选择###")
-            while self.driver.title.find('确认订单') == -1:           #如果跳转到了订单结算界面就算这步成功了，否则继续执行此步
-                
-                # self.driver.find_elements_by_xpath('//html//body//div[@class = "perform__order__price"]//div[2]//div//div//a[2]')[0].click()   #购票数+1(若需要)
-                # self.driver.find_elements_by_xpath('//div[@class = "perform__order__select perform__order__select__performs"]//div[2]//div//div[x]')[0].click()   #默认购票日期的选择,x为日期的选择，1，2，3....
-                cart = self.driver.find_element_by_class_name('perform')   #获得选票界面的表单值
-
-                # try:各种按钮的点击,
-                buybutton = self.driver.find_element_by_class_name('buybtn').text
-                try:
-                    buybutton = self.driver.find_element_by_class_name('buybtn').text
-                    if buybutton == "即将开抢":
-                        self.status=2
-                        self.driver.get(target_url)
-                        print('###抢票未开始，刷新等待开始###')
-                        continue
-
-                    elif buybutton == "立即预定":
-                        self.driver.find_element_by_class_name('buybtn').click()
-                        self.status = 3
-                        self.num = 1
-                    elif buybutton == "立即购买":
-                        self.driver.find_element_by_class_name('buybtn').click()
-                        self.status = 4
-
-                    #选座购买暂时无法完成自动化
-                    elif buybutton == "选座购买":
-                        self.driver.find_element_by_class_name('buybtn').click()
-                        self.status = 5
-
-                    elif buybutton == "提交缺货登记":
-                        print('###抢票失败，请手动提交缺货登记###')  
-                        break
-
-                except:
-                    print('###未跳转到订单结算界面###')
-                
-                title = self.driver.title
-                if title =="确认订单" :                                    
-                    self.check_order()
-
-                #若是选座购买，自行选座
-                elif self.status == 5 :
-                    print("###请自行选择位置和票价###")
-                    break
-                    
-                # if title !="确认订单" :                                     #如果前一次失败了，那就刷新界面重新开始
-                #     self.status=2
-                #     self.driver.get(target_url)
-                #     print('###抢票失败，从新开始抢票###')
+        priceSelBtn = self.driver.find_element_by_css_selector('.select_right_list_item:last-child')
+        priceSelBtn.click()
 
 
     def check_order(self):
@@ -180,7 +130,8 @@ class Concert(object):
             # 最后一步提交订单
 
             time.sleep(1)       # 太快会影响加载，导致按钮点击无效
-            self.driver.find_elements_by_xpath('//div[@class = "w1200"]//div[2]//div//div[9]//button[1]')[0].click()
+            #点击付款
+            # self.driver.find_elements_by_xpath('//div[@class = "w1200"]//div[2]//div//div[9]//button[1]')[0].click()
 
             # try:
             #     element = WebDriverWait(self.driver, 5).until(EC.title_contains('支付宝 - 网上支付 安全快速！'))
